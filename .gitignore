@@ -1,5 +1,5 @@
 
-.Rproj
+
 *.csv
 *.html
 
@@ -18,4 +18,8 @@
 
 .Rproj.user/shared/notebooks/paths
 
-Assignment10.Rproj
+
+
+.Rproj.user/1A479AB9/sources/prop/
+
+.Rproj.user/shared/notebooks/178DF49A-Artie Maharaj Assignment 10/1/1A479AB94D4119AA/c970ccelfiuq2/000007.error

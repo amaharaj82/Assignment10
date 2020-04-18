@@ -1,18 +1,55 @@
 ---
-title: "R Notebook"
+title: "Assignment 10"
+author: Artie Maharaj
+date: April 21, 2020
 output: html_notebook
 ---
+This is assignment 10 for EDRM 718
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
-
+1. Write a script to import and tidy the Johnson Elementary Project Data
 ```{r}
-plot(cars)
+library(tidyverse)
+
+johnson_data <- read_csv("Johnson Elementary ELA Project.csv") 
+
+johnson_data <- read_csv("Johnson Elementary ELA Project.csv", skip =5,           col_names = c("Room", "Student ID", "TardiesAbsences", "1st 
+Quarter", "2nd Quarter", "3rd Quarter", "4th Quarter"), 
+                         col_types = cols("Room" = col_factor()))
+
+johnson_data <- as_tibble(johnson_data)
+
+johnson_data
+
+new_johnson_data <- johnson_data %>%
+  separate(TardiesAbsences, into = c("Tardies", "Absences"),convert = TRUE)
+
+new_johnson_data <-as_tibble(new_johnson_data)
+new_johnson_data
+
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+2. Write a script to provie summary statistics for the number of tardies and absences for each room. 
+```{r}
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+```
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+3. Write a script to show the frequency of missing data points for each quarter by room.
+
+```{r}
+
+```
+
+
+4. Construct a grpah that illustrates the median rating trends across the four quarters for the fifth-grade classes
+```{r}
+
+```
+
+
+5. Use the NYC flights data to construct a graph that compares carriers in terms of the proportion of 2013 flights that arrived on time when traveling from New York City to Atlanta. Your graph should include a title and easy to read labels, including names of airlines rather than airline codes. 
+
+```{r}
+
+```
+
