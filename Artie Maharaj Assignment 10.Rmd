@@ -91,12 +91,19 @@ tidy_johnson_data %>%
 
 flights <- read_csv("NYC Flights 2013.csv")
 
-flights%>%
-  filter(origin== "JFK", dest == "ATL")%>%
-  mutate(proportion = sched_arr_time/arr_delay, na.rm = TRUE)%>%
-  ggplot(flights, aes_(x = carriers, fill = proportion)) +
+arrive.proportion <- flights%>%
+  filter(dest == "ATL")%>%
+  mutate(at.proportion = sched_arr_time/arr_time, na.rm= TRUE) %>%
+  select(carrier, origin, dest, sched_arr_time, arr_time, at.proportion) 
+
+
+arrive.proportion %>%
+  group_by(carrier) %>%
+  ggplot(arrive.proportion, aes(x = at.proportion, fill(carrier))) +
   geom_bar(position = "fill") +
-  labs(x = "proportion", y = "carrier")
+  labs(title = "Proportion of 2013 flights that arrived on time by Airline        from NYC to ATL",
+        x = "Proportion", y = "Airline")
+
 
 ```
 
