@@ -42,15 +42,23 @@ tidy_johnson_data
 
 2. Write a script to provie summary statistics for the number of tardies and absences for each room. 
 ```{r}
-
 tidy_johnson_data %>%
   group_by(Room) %>%
    summarize(count = n(),
    Average_Tardies = mean(Tardies, na.rm = TRUE),
    sd_Tardies = sd(Tardies, na.rm = TRUE),
+   min_Tardies = min(Tardies, na.rm = TRUE),
+   max_Tardies = max(Tardies, na.rm = TRUE),
+   median_Tardies = median(Tardies, na.rm = TRUE),
+   first.quantile_Tardies = quantile(Tardies, probs = .25, na.rm = TRUE),
+   third.quantile_Targies= quantile(Tardies, probs =.75, na.rm = TRUE),
+   median_Absences = mean(Absences, na.rm = TRUE),
    Average_Absences = mean(Absences, na.rm = TRUE),
-   sd_Absences = sd(Absences, na.rm = TRUE))
-    
+   sd_Absences = sd(Absences, na.rm = TRUE),
+   min_Absences = min(Absences, na.rm = TRUE),
+   max_Absences = max(Absences, na.rm = TRUE),
+   first.quantile_Absences = quantile(Absences,probs = .25, na.rm =TRUE),
+   third.quantile_Absences = quantile(Tardies, probs =.75, na.rm = TRUE))
 ```
 
 3. Write a script to show the frequency of missing data points for each quarter by room.
@@ -65,8 +73,6 @@ johnson.missing <- tidy_johnson_data %>%
 4. Construct a graph that illustrates the median rating trends across the four quarters for the fifth-grade classes
 ```{r}
 
-#I realized that I needed to create a long format for the data for this part to work? 
-
 tidy_johnson_data %>%
   group_by(Room) %>%
   summarize(count = n(),
@@ -75,7 +81,6 @@ tidy_johnson_data %>%
     geom_line() +
     labs(x = "Quarter",
      y = "Median Ratings")
-
 
 ```
 
