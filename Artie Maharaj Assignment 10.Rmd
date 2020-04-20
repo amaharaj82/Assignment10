@@ -29,7 +29,11 @@ new_johnson_data <- new_johnson_data %>%
   fill(Room)
 
 tidy_johnson_data <- new_johnson_data[-c(1, 22,45,69,93,116,154,175,196),]
+
 tidy_johnson_data <- as_tibble(tidy_johnson_data)
+  
+
+
 ```
 
 2. Write a script to provie summary statistics for the number of tardies and absences for each room. 
@@ -39,9 +43,10 @@ tidy_johnson_data %>%
   group_by(Room) %>%
    summarize(count = n(),
    Average_Tardies = mean(Tardies, na.rm = TRUE),
-   Average_Absences = mean(Absences, na.rm = TRUE))
-
-
+   sd_Tardies = sd(Tardies, na.rm = TRUE),
+   Average_Absences = mean(Absences, na.rm = TRUE),
+   sd_Absences = sd(Absences, na.rm = TRUE))
+    
 ```
 
 3. Write a script to show the frequency of missing data points for each quarter by room.
@@ -58,20 +63,26 @@ summarize(na_q1 = sum(is.na(`1st Quarter`)),
 4. Construct a graph that illustrates the median rating trends across the four quarters for the fifth-grade classes
 ```{r}
 
-tidy_johnson_data %>%
-group_by(Room)%>%
-summarize(Q1_median = median(`1st Quarter`, na.rm = TRUE),
-            Q2_median = median(`2nd Quarter`, na.rm = TRUE),
-            Q3_median = median(`3rd Quarter`,na.rm = TRUE),
-            Q4_median = median(`4th Quarter`,na.rm = TRUE))
+median_by_room <-tidy_johnson_data %>%
+   group_by(Room)%>%
+    summarize(Q1_median = median(`1st Quarter`, na.rm = TRUE),
+              Q2_median = median(`2nd Quarter`, na.rm = TRUE),
+              Q3_median = median(`3rd Quarter`, na.rm = TRUE),
+             Q4_median = median(`4th Quarter`, na.rm = TRUE))
 
-medians <- sum(Q1_median, Q2_median, Q3_median, Q4_median)
-  
-  ggplot(aes(x = Room, y = medians)) +
-    geom_point(aes(size = count)) +
-    geom_smooth(se = FALSE)
+#I realized that I needed to create a long format for the data for this part to work? 
 
-  
+update_median <- median_by_room %>%
+  gather(`Q1_median`, `Q2_median`, `Q3_median`, `Q4_median`,    
+         key = "Quarter",
+         value = "median.ratings")
+
+update_median %>%
+ggplot(aes(x = Quarter, y = median.ratings, color = Room))+ 
+  geom_line() +
+labs(x = "Quarter",
+     y = "Median Ratings")
+    
 ```
 
 
