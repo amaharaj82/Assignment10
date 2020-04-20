@@ -32,8 +32,12 @@ tidy_johnson_data <- new_johnson_data[-c(1, 22,45,69,93,116,154,175,196),]
 
 tidy_johnson_data <- as_tibble(tidy_johnson_data)
   
+tidy_johnson_data <- tidy_johnson_data %>%
+  gather(`1st Quarter`, `2nd Quarter`, `3rd Quarter`, `4th Quarter`,    
+         key = "Quarter",
+         value = "Ratings")
 
-
+tidy_johnson_data
 ```
 
 2. Write a script to provie summary statistics for the number of tardies and absences for each room. 
@@ -52,43 +56,42 @@ tidy_johnson_data %>%
 3. Write a script to show the frequency of missing data points for each quarter by room.
 
 ```{r}
-tidy_johnson_data %>%
-group_by(Room) %>%
-summarize(na_q1 = sum(is.na(`1st Quarter`)),
-          na_q2 = sum(is.na(`2nd Quarter`)),
-          na_q3 = sum(is.na(`3rd Quarter`)),
-          na_q4 = sum(is.na(`4th Quarter`)))
+johnson.missing <- tidy_johnson_data %>%
+  group_by(Room, Quarter) %>%
+  summarize(sum(is.na(Ratings)))
+
 ```
 
 4. Construct a graph that illustrates the median rating trends across the four quarters for the fifth-grade classes
 ```{r}
 
-median_by_room <-tidy_johnson_data %>%
-   group_by(Room)%>%
-    summarize(Q1_median = median(`1st Quarter`, na.rm = TRUE),
-              Q2_median = median(`2nd Quarter`, na.rm = TRUE),
-              Q3_median = median(`3rd Quarter`, na.rm = TRUE),
-             Q4_median = median(`4th Quarter`, na.rm = TRUE))
-
 #I realized that I needed to create a long format for the data for this part to work? 
 
-update_median <- median_by_room %>%
-  gather(`Q1_median`, `Q2_median`, `Q3_median`, `Q4_median`,    
-         key = "Quarter",
-         value = "median.ratings")
-
-update_median %>%
-ggplot(aes(x = Quarter, y = median.ratings, color = Room))+ 
-  geom_line() +
-labs(x = "Quarter",
+tidy_johnson_data %>%
+  group_by(Room) %>%
+  summarize(count = n(),
+            median_rating = median(Ratings, na.rm = TRUE)) %>%
+  ggplot(aes(x = Quarter, y = median_rating, color = Room, na.rm = TRUE)) +
+    geom_line() +
+    labs(x = "Quarter",
      y = "Median Ratings")
-    
+
+
 ```
 
 
 5. Use the NYC flights data to construct a graph that compares carriers in terms of the proportion of 2013 flights that arrived on time when traveling from New York City to Atlanta. Your graph should include a title and easy to read labels, including names of airlines rather than airline codes. 
 
 ```{r}
+
+flights <- read_csv("NYC Flights 2013.csv")
+
+flights%>%
+  filter(origin== "JFK", dest == "ATL")%>%
+  mutate(proportion = sched_arr_time/arr_delay, na.rm = TRUE)%>%
+  ggplot(flights, aes_(x = carriers, fill = proportion)) +
+  geom_bar(position = "fill") +
+  labs(x = "proportion", y = "carrier")
 
 ```
 
