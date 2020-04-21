@@ -83,10 +83,6 @@ ggplot(johnson_median, aes(x = Quarter, y = median_rating, group= Room, color = 
       labs(x = "Quarter",
      y = "Median Ratings")
 
-# I am missing something here...can't figure out why my lines aren't showing up in
-# the graph. I am thinking it has to do with my geom_line (), but not sure what goes
-#in there. 
-
 ```
 5. Use the NYC flights data to construct a graph that compares carriers in terms of the proportion of 2013 flights that arrived on time when traveling from New York City to Atlanta. Your graph should include a title and easy to read labels, including names of airlines rather than airline codes. 
 
@@ -95,18 +91,19 @@ ggplot(johnson_median, aes(x = Quarter, y = median_rating, group= Room, color = 
 flights <- read_csv("NYC Flights 2013.csv")
 
 arrive.proportion <- flights%>%
+  group_by(carrier) %>%
   filter(dest == "ATL")%>%
   mutate(at.proportion = sched_arr_time/arr_time, na.rm= TRUE) %>%
   select(carrier, origin, dest, sched_arr_time, arr_time, at.proportion) 
 
 
-arrive.proportion %>%
-  group_by(carrier) %>%
-  ggplot(arrive.proportion, aes(x = `at.proportion`, fill(carrier))) +
+  ggplot(arrive.proportion, aes(x = at.proportion, fill = carrier)) +
   geom_bar(position = "fill") +
-  labs(title = "Proportion of 2013 flights that arrived on time by Airline        from NYC to ATL",
+  labs(title = "Proportion of 2013 flights that arrived on time by Airline from NYC to ATL",
         x = "Proportion", y = "Airline")
-
-
+  
+#Alright, stuck on the last graph. I got a legend, but no bar plot showed #up. I think this is related to my geom_bar #function or maybe I am missing #some argument in the ggplot part of the #script. Will continue to work on #it.
+  
+  
 ```
 
