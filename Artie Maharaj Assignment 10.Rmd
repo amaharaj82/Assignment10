@@ -38,6 +38,7 @@ tidy_johnson_data <- tidy_johnson_data %>%
          value = "Ratings")
 
 tidy_johnson_data
+
 ```
 
 2. Write a script to provie summary statistics for the number of tardies and absences for each room. 
@@ -72,15 +73,19 @@ johnson.missing <- tidy_johnson_data %>%
 
 4. Construct a graph that illustrates the median rating trends across the four quarters for the fifth-grade classes
 ```{r}
-
-tidy_johnson_data %>%
-  group_by(Room) %>%
-  summarize(count = n(),
-            median_rating = median(Ratings, na.rm = TRUE)) %>%
-  ggplot(aes(x = `Quarter`, y = median_rating, color = Room, na.rm = TRUE))+
+johnson_median <- tidy_johnson_data %>%
+  group_by(Room, Quarter) %>%
+  summarize(median_rating = median(Ratings, na.rm = TRUE)) 
+  
+ggplot(johnson_median, aes(x = Quarter, y = median_rating, group= Room, color = Room))+
     geom_line() +
-    labs(x = "Quarter",
+  facet_wrap(vars(Room))+
+      labs(x = "Quarter",
      y = "Median Ratings")
+
+# I am missing something here...can't figure out why my lines aren't showing up in
+# the graph. I am thinking it has to do with my geom_line (), but not sure what goes
+#in there. 
 
 ```
 5. Use the NYC flights data to construct a graph that compares carriers in terms of the proportion of 2013 flights that arrived on time when traveling from New York City to Atlanta. Your graph should include a title and easy to read labels, including names of airlines rather than airline codes. 
