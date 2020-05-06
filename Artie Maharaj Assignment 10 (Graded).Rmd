@@ -1,0 +1,113 @@
+---
+title: "Assignment 10"
+author: Artie Maharaj
+date: April 21, 2020
+output: html_notebook
+---
+This is assignment 10 for EDRM 718
+
+1. Write a script to import and tidy the Johnson Elementary Project Data
+```{r}
+library(tidyverse)
+
+johnson_data <- read_csv("Johnson Elementary ELA Project.csv") 
+
+johnson_data <- read_csv("Johnson Elementary ELA Project.csv", skip =4,         
+col_names = c("Room", "Student ID", "TardiesAbsences", "1st Quarter", "2nd Quarter", "3rd Quarter", "4th Quarter"), 
+                         col_types = cols("Room" = col_factor()))
+
+johnson_data <- as_tibble(johnson_data)
+
+johnson_data
+
+new_johnson_data <- johnson_data %>%
+  separate(TardiesAbsences, into = c("Tardies", "Absences"),convert = TRUE)
+
+new_johnson_data <-as_tibble(new_johnson_data)
+
+new_johnson_data <- new_johnson_data %>%
+  fill(Room)
+
+tidy_johnson_data <- new_johnson_data[-c(1, 22,45,69,93,116,154,175,196),]
+
+tidy_johnson_data <- as_tibble(tidy_johnson_data)
+  
+tidy_johnson_data <- tidy_johnson_data %>%
+  gather(`1st Quarter`, `2nd Quarter`, `3rd Quarter`, `4th Quarter`,    
+         key = "Quarter",
+         value = "Ratings")
+
+tidy_johnson_data
+
+```
+
+2. Write a script to provie summary statistics for the number of tardies and absences for each room. 
+```{r}
+tidy_johnson_data %>%
+  group_by(Room) %>%
+   summarize(count = n(),
+   Average_Tardies = mean(Tardies, na.rm = TRUE),
+   sd_Tardies = sd(Tardies, na.rm = TRUE),
+   min_Tardies = min(Tardies, na.rm = TRUE),
+   max_Tardies = max(Tardies, na.rm = TRUE),
+   median_Tardies = median(Tardies, na.rm = TRUE),
+   first_quantile_Tardies = quantile(Tardies, probs = .25, na.rm = TRUE),
+   third_quantile_Tardies= quantile(Tardies, probs =.75, na.rm = TRUE),
+   median_Absences = mean(Absences, na.rm = TRUE),
+   Average_Absences = mean(Absences, na.rm = TRUE),
+   sd_Absences = sd(Absences, na.rm = TRUE),
+   min_Absences = min(Absences, na.rm = TRUE),
+   max_Absences = max(Absences, na.rm = TRUE),
+   first_quantile_Absences = quantile(Absences,probs = .25, na.rm =TRUE),
+   third_quantile_Absences = quantile(Absences, probs =.75, na.rm = TRUE))
+```
+
+3. Write a script to show the frequency of missing data points for each quarter by room.
+
+**The horizontal axes are messy. (-5)**
+
+```{r}
+johnson.missing <- tidy_johnson_data %>%
+  group_by(Room, Quarter) %>%
+  summarize(sum(is.na(Ratings)))
+
+```
+
+4. Construct a graph that illustrates the median rating trends across the four quarters for the fifth-grade classes
+```{r}
+johnson_median <- tidy_johnson_data %>%
+  group_by(Room, Quarter) %>%
+  summarize(median_rating = median(Ratings, na.rm = TRUE)) 
+  
+ggplot(johnson_median, aes(x = Quarter, y = median_rating, group= Room, color = Room))+
+    geom_line() +
+  facet_wrap(vars(Room))+
+      labs(x = "Quarter",
+     y = "Median Ratings")
+
+```
+5. Use the NYC flights data to construct a graph that compares carriers in terms of the proportion of 2013 flights that arrived on time when traveling from New York City to Atlanta. Your graph should include a title and easy to read labels, including names of airlines rather than airline codes. 
+
+**This graph did not work. (-10)**
+
+```{r}
+
+flights <- read_csv("NYC Flights 2013.csv")
+
+arrive.proportion <- flights%>%
+  group_by(carrier) %>%
+  filter(dest == "ATL")%>%
+  mutate(at.proportion = sched_arr_time/arr_time, na.rm= TRUE) %>%
+  select(carrier, origin, dest, sched_arr_time, arr_time, at.proportion) 
+
+
+  ggplot(arrive.proportion, aes(x = at.proportion, fill = carrier)) +
+  geom_bar(position = "fill") +
+  labs(title = "Proportion of 2013 flights that arrived on time by Airline from NYC to ATL",
+        x = "Proportion", y = "Airline")
+  
+#Alright, stuck on the last graph. I got a legend, but no bar plot showed #up. I think this is related to my geom_bar #function or maybe I am missing #some argument in the ggplot part of the #script. Will continue to work on #it.
+  
+  
+```
+
